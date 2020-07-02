@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
+import 'package:Hurb_Challenge/home_list_view.dart';
+import 'package:Hurb_Challenge/detail_screen.dart';
+import 'package:Hurb_Challenge/last_seen_list_view.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -20,309 +25,419 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  TabController controller;
+    TabController controller;
+    ProductType productType = ProductType.hotels;
 
-  int getColorHexFromStr(String colorStr) {
-    colorStr = "FF" + colorStr;
-    colorStr = colorStr.replaceAll("#", "");
-    int val = 0;
-    int len = colorStr.length;
-    for (int i = 0; i < len; i++) {
-      int hexDigit = colorStr.codeUnitAt(i);
-      if (hexDigit >= 48 && hexDigit <= 57) {
-        val += (hexDigit - 48) * (1 << (4 * (len - 1 - i)));
-      } else if (hexDigit >= 65 && hexDigit <= 70) {
-        // A..F
-        val += (hexDigit - 55) * (1 << (4 * (len - 1 - i)));
-      } else if (hexDigit >= 97 && hexDigit <= 102) {
-        // a..f
-        val += (hexDigit - 87) * (1 << (4 * (len - 1 - i)));
-      } else {
-        throw new FormatException("An error occurred when converting a color");
-      }
-    }
-    return val;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = new TabController(length: 4, vsync: this);
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    controller.dispose();
+    super.dispose();
+  }
+
+ @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: ListView(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
+    return Container(
+      color: AppTheme.nearlyWhite,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: <Widget>[
               Stack(
                 children: <Widget>[
-                  Container(
-                    height: 300.0,
+                   Container(
+                    height: 350.0,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.vertical(bottom: Radius.elliptical(150, 80)),
-                      color: Color(getColorHexFromStr('#143A7C'))
+                      color: AppTheme.commonBlue
                          .withOpacity(1.0)),
                     ),
-                  Positioned(
-                    bottom: 50.0,
-                    right: 100.0,
-                    child: Container(
-                      height: 400.0,
-                      width: 400.0,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(200.0),
-                          color: Color(getColorHexFromStr('#BFCC2D'))
-                              .withOpacity(0.4)),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 100.0,
-                    left: 150.0,
-                    child: Container(
-                        height: 300.0,
-                        width: 300.0,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(150.0),
-                            color: Color(getColorHexFromStr('#BFCC2D'))
-                                .withOpacity(0.5))),
-                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(height: 15.0),
-                      Row(
-                        children: <Widget>[
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width - 120.0),
-                          SizedBox(height: 15.0),
-                        ],
-                      ),
-                      SizedBox(height: 50.0),
-                      Padding(
-                        padding: EdgeInsets.only(left: 15.0),
-                        child: Text(
-                          'Pesquisar',
-                          style: TextStyle(
-                              color: Color(getColorHexFromStr('#FFFFFF')),
-                              fontFamily: 'Montserrat',
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Padding(
-                        padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 10),
-                        child: Material(
-                          elevation: 5.0,
-                          borderRadius: BorderRadius.circular(60.0),
-                          child: TextFormField(
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  prefixIcon: Icon(Icons.search,
-                                      color:
-                                          Color(getColorHexFromStr('#000000')),
-                                      size: 30.0),
-                                  contentPadding:
-                                      EdgeInsets.only(left: 15.0, top: 15.0),
-                                  hintText: 'Vai para onde?',
-                                  hintStyle: TextStyle(
-                                      color: Color(getColorHexFromStr('#333641')), 
-                                      fontFamily: 'Montserrat'))),
-                        ),
-                      ),
-                      SizedBox(height: 10.0)
+                      SizedBox(height: 40.0),
+                      getAppBar(),
+                      SizedBox(height: 5.0),
+                      getSearchBar(),
+                      SizedBox(height: 5.0),
+                      getFilters(),
                     ],
                   )
                 ],
               ),
-              SizedBox(height: 10.0),
-              Padding(
-                 padding: EdgeInsets.only(top: 0),
-                 child: Stack(
-                children: <Widget>[
-                  SizedBox(height: 10.0),
-                  Material(
-                      child: Container(height: 75.0, color: Colors.white)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            SizedBox(height: 5.0),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
                     children: <Widget>[
-                      Container(
-                        height: 85.0,
-                        width: MediaQuery.of(context).size.width / 4,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 40.0,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage('assets/images/hotel.png'))),
-          
-                            ),
-                            Padding(padding: EdgeInsets.only(top: 10.0),
-                            child: Text(
-                              'Milhares \nde Hotéis',
-                              maxLines: 2,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontFamily: 'Montserrat', fontSize: 14, color: Colors.black),
-                            )
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 85.0,
-                        width: MediaQuery.of(context).size.width / 4,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 40.0,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image:
-                                          AssetImage('assets/images/cancelamento.png'))),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: Text(
-                              'Cancelamento \nGrátis',
-                              maxLines: 2,
-                              textAlign: TextAlign.center,
-                             style: TextStyle(fontFamily: 'Montserrat', fontSize: 14, color: Colors.black),
-                            )
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 85.0,
-                        width: MediaQuery.of(context).size.width / 4,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 40.0,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage('assets/images/atendimento.png'))),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: Text(
-                              'Atendimento\n 24h',
-                              maxLines: 2,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontFamily: 'Montserrat', fontSize: 14, color: Colors.black),
-                            )
-                            ),
-                          ],
-                        ),
+                      Flexible(
+                       child: getHome(),
                       ),
                     ],
-                  )
-                ],
+                  ),
+                ),
               ),
+            ),
+          ],
+        ),
+      // bottomNavigationBar: Material(
+      //   color: Colors.white,
+      //   child: TabBar(
+      //     controller: controller,
+      //     indicatorColor: Colors.yellow,
+      //     tabs: <Widget>[
+      //       Tab(icon: Icon(Icons.event_seat, color: Colors.yellow)),
+      //       Tab(icon: Icon(Icons.timer, color: Colors.grey)),
+      //       Tab(icon: Icon(Icons.shopping_cart, color: Colors.grey)),
+      //       Tab(icon: Icon(Icons.person_outline, color: Colors.grey))
+      //     ],
+      //   ),
+      // ),
+      ),
+    );
+  }
+
+  Widget getFilters() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
+          child: Text(
+            'Filtrar por:',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              letterSpacing: 0.27,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          child: Row(
+            children: <Widget>[
+              getButtons(ProductType.hotels, productType == ProductType.hotels),
+              const SizedBox(
+                width: 16,
               ),
-              itemCard('Pacote Maceió', 'Aéreo + Hotel/Café da Manhã + Opcional', 'assets/images/maceio.png', false),
+              getButtons(
+                  ProductType.packages, productType == ProductType.packages),
+              const SizedBox(
+                width: 16,
+              ),
+              getButtons(
+                  ProductType.activities, productType == ProductType.activities),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+Widget getInfo(){
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
+      child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Container(
+                height: 85.0,
+                width: MediaQuery.of(context).size.width / 4,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/hotel.png'))),
+
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      'Milhares \nde Hotéis',
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14, letterSpacing: 0.27, color: AppTheme.darkGray),
+                    )
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: 85.0,
+                width: MediaQuery.of(context).size.width / 4,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image:
+                                  AssetImage('assets/images/cancelamento.png'))),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Text(
+                      'Cancelamento \nGrátis',
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14, letterSpacing: 0.27, color: AppTheme.darkGray),
+                    )
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: 85.0,
+                width: MediaQuery.of(context).size.width / 4,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/atendimento.png'))),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Text(
+                      'Atendimento\n 24h',
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14, letterSpacing: 0.27, color: AppTheme.darkGray)
+                    )
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+    );
+  } 
+  
+  Widget getHome() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+        SizedBox(height: 5.0),
+        getInfo(),
+        SizedBox(height: 30.0),
+        Text(
+        'Últimos vistos:',
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+          letterSpacing: 0.27,
+          color: AppTheme.darkerText,
+          ),
+        ),
+        const SizedBox(
+          height: 8.0,
+        ),
+        LastSeenListView(
+          callBack: () {
+            moveTo();
+          },
+        ),
+          Text(
+            'Destaques',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              letterSpacing: 0.27,
+              color: AppTheme.darkerText,
+            ),
+          ),
+          Flexible(
+            child: HomeListView(
+              callBack: () {
+                moveTo();
+              },
+            ),
           )
         ],
       ),
     );
   }
 
-  Widget itemCard(String title, String subtitle ,String imgPath, bool isFavorite) {
-    return Padding(
-      padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
-      child: Material(
-      elevation: 3.0,
-      borderRadius: BorderRadius.circular(20.0),
-      child: Container(
-        height: 150.0,
-        width: double.infinity,
-        decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: Color(getColorHexFromStr('#FFFFFF'))
-            .withOpacity(1.0)),
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: 140.0,
-              height: 150.0,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20), topLeft: Radius.circular(20)),
-                  image: DecorationImage(
-                      image: AssetImage(imgPath), fit: BoxFit.cover)),
-            ),
-            SizedBox(width: 4.0),
-            Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      title,
-                      maxLines: 3,
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 45.0),
-                    Material(
-                      elevation: isFavorite ? 0.0 : 2.0,
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Container(
-                        height: 40.0,
-                        width: 40.0,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: isFavorite
-                                ? Colors.grey.withOpacity(0.2)
-                                : Colors.white),
-                        child: Center(
-                          child: isFavorite
-                              ? Icon(Icons.favorite_border)
-                              : Icon(Icons.favorite, color: Color(getColorHexFromStr('#E6207E'))),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(height: 5.0),
-                Container(
-                  width: 175.0,
-                  child: Text(
-                   subtitle,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        color: Colors.grey,
-                        fontSize: 12.0),
-                  ),
-                ),
-                SizedBox(height: 5.0),
-                 Row(
-                  children: <Widget>[
-                    SizedBox(width: 35.0),
-                    Container(
-                      height: 40.0,
-                      width: 70.0,
-                      color: Color(getColorHexFromStr('#E6207E')),
-                      child: Center(
-                        child: Text(
-                          'R\$889',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
-      ),
+  void moveTo() {
+    Navigator.push<dynamic>(
+      context,
+      MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) => DetailScreen(),
       ),
     );
   }
+
+  Widget getButtons(ProductType productTypeData, bool isSelected) {
+    String txt = '';
+    if (ProductType.hotels == productTypeData) {
+      txt = 'Hotéis';
+    } else if (ProductType.packages == productTypeData) {
+      txt = 'Pacotes';
+    } else if (ProductType.activities == productTypeData) {
+      txt = 'Atividades';
+    }
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+            color: isSelected
+                ? AppTheme.buttonPink
+                : AppTheme.nearlyWhite,
+            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+            border: Border.all(color: AppTheme.commonBlue)),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            splashColor: Colors.white24,
+            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+            onTap: () {
+              setState(() {
+                productType = productTypeData;
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  top: 12, bottom: 12, left: 18, right: 18),
+              child: Center(
+                child: Text(
+                  txt,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.27,
+                    color: isSelected
+                        ? AppTheme.nearlyWhite
+                        : AppTheme.buttonPink,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 18),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width * 0.75,
+            height: 64,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppTheme.cardColor,
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(13.0),
+                    bottomLeft: Radius.circular(13.0),
+                    topLeft: Radius.circular(13.0),
+                    topRight: Radius.circular(13.0),
+                  ),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 16, right: 16),
+                        child: TextFormField(
+                          style: TextStyle(
+                            fontFamily: 'WorkSans',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: AppTheme.commonBlue,
+                          ),
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            labelText: 'Para onde quer ir?',
+                            border: InputBorder.none,
+                            helperStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: AppTheme.lightgray,
+                            ),
+                            labelStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              letterSpacing: 0.2,
+                              color: AppTheme.lightgray,
+                            ),
+                          ),
+                          onEditingComplete: () {},
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Expanded(
+            child: SizedBox(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget getAppBar() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 18),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Pesquisar',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                    letterSpacing: 0.27,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+enum ProductType {
+  hotels,
+  packages,
+  activities,
 }
